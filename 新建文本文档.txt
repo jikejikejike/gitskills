@@ -1,0 +1,58 @@
+ <!--基本数据类型：包含int,String,Date等。基本数据类型作为传参，只能传入一个。通过#{参数名} 即可获取传入的值
+     复杂数据类型：包含JAVA实体类、Map。通过#{属性名}或#{map的KeyName}即可获取传入的值-->
+    <select id="findUserPageCondition" resultMap="userVoResultMap" parameterType="PageInfo">
+        SELECT
+        t.id,
+        loginname,
+        t.`name`,
+        `password`,
+        sex,
+        age,
+        usertype,
+        t.`status`,
+        organization_id,
+        t.createdate,
+        phone,
+        s.`name` AS organizationName,
+        o.id AS roleId,
+        o.`name` AS roleName
+        FROM
+        user t
+        LEFT JOIN user_role r ON t.id = r.user_id
+        LEFT JOIN role o ON r.role_id = o.id
+        LEFT JOIN organization s ON s.id = t.organization_id
+        <where>
+            <if test=" condition.name != null and condition.name != '' ">
+                t.name = #{condition.name}
+            </if>
+            <if test=" condition.organizationId != null ">
+                t.organization_id = #{condition.organizationId}
+            </if>
+            <if test="condition.startTime != null">
+                <![CDATA[
+            		and t.createdate >= #{condition.startTime}
+           		]]>
+            </if>
+            <if test="condition.endTime != null">
+                <![CDATA[
+            		and t.createdate <= #{condition.endTime}
+        		]]>
+            </if>
+        </where>
+        LIMIT #{from}, #{size}
+    </select>
+    <!--通过（自定义类型）传参 来实现分页-->
+
+
+
+
+
+
+
+ <!--
+         <collection property="Java属性名" ofType="另一Java类名" javaType="ArrayList" resultMap="另一个resultMap的ID"/>
+         <resultMap="另一个resultMap的ID" type="另一Java类名">
+         <id property="id" column="关联主键ID"/>
+         ........
+         </resultMap>
+         -->
